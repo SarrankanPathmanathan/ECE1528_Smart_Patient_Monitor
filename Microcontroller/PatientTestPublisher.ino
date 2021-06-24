@@ -5,8 +5,8 @@
 #include <ArduinoJson.h>
 #include <Adafruit_Fingerprint.h>
 
-const char*ssid = "*";
-const char*pass = "*";
+const char*ssid = "PATHWIFI";
+const char*pass = "4A6F776427A2";
 const char*mqttBroker = "192.168.2.87";
 const int mqttPort =1883;
 
@@ -16,8 +16,8 @@ PubSubClient client(espClient1);
 //All required PIN Declarations
 
 //Ultra Sonic Distance Sensor
-const int trigPin = D4; 
-const int echoPin = D5;
+const int trigPin = D3; 
+const int echoPin = D2;
 const char*distance_id = "arduino_Distance"; 
 long duration;
 int distance;
@@ -29,10 +29,15 @@ const char*temperature_id = "arduino_DHT11";
 DHT dht(DHTPIN, DHTTYPE);// Initialize DHT sensor.
 
 //Biometric
-const char*biometric_id = "arduino_AdaFruit_Fingerprint";
 SoftwareSerial mySerial(D13, D14);
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 String auth = "NO";
+
+//Pulse Sensor
+int PulseSensorPurplePin = A0;        // Pulse Sensor PURPLE WIRE connected to ANALOG PIN 0
+int LED15 = D15;   //  The on-board Arduion LED
+int Signal;                // holds the incoming raw data. Signal value can range from 0-1024
+int Threshold = 544;            // Determine which Signal to "count as a beat", and which to ingore.
 
 int status = WL_IDLE_STATUS;
 unsigned long lastSend;
@@ -41,13 +46,14 @@ void setup() {
   Serial.begin(115200);
   InitWiFi();
   dht.begin();
-  //pinMode(trigPin, OUTPUT);
-  //pinMode(echoPin, INPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
   delay(10);
   client.setServer(mqttBroker,mqttPort);
   lastSend = 0;
   setupBiometric();
 }
+
 
 void setupBiometric(){
   while (!Serial);  // For Yun/Leo/Micro/Zero/...
@@ -88,7 +94,7 @@ void loop() {
     reconnect();
   }if( millis() - lastSend > 8000 ) { 
     //Update and send only after 1 seconds
-   // getAndSendDistanceData();
+    getAndSendDistanceData();
     getAndSendTemperatureAndHumidityData();
     lastSend = millis();
   }
