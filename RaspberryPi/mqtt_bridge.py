@@ -8,10 +8,8 @@ from datetime import datetime;
 KAFKA_URL = '192.168.2.47'
 KAFKA_PORT = '9092'
 producer = KafkaProducer(bootstrap_servers=KAFKA_URL+':'+KAFKA_PORT, value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-KAFKA_TOPIC_DISTANCE = 'Distance'
-KAFKA_TOPIC_TEMP = 'Temperature'
-KAFKA_TOPIC_MOTION = 'Motion'
-KAFKA_TOPIC_BIOMETRIC = "Biometric"
+KAFKA_TOPIC_MONITOR = "Monitoring_Devices"
+KAFKA_TOPIC_PATIENTS = "Patients"
 
 MQTT_TOPIC_DISTANCE="v1/Ultrasonicsensor/distance"
 MQTT_TOPIC_TEMP = "v1/DHTsensor/roomtempandhumidity"
@@ -28,14 +26,20 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, message):
     jsonmsg=json.loads(message.payload)
+    print(jsonmsg)
     dateTimeObj = datetime.now()
     jsonmsg["timestamp"] = dateTimeObj = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S)")
     if(jsonmsg["id"] == "arduino_Distance"):
-        future = producer.send(KAFKA_TOPIC_DISTANCE, json.dumps(jsonmsg))
+        jsonmsg["id"] = str(jsonmsg["id"]) + "_" + str(jsonmsg["monitorId"]);
+        future = producer.send(KAFKA_TOPIC_MONITOR, json.dumps(jsonmsg))
+        print("sent distance")
     elif(jsonmsg["id"] == "arduino_DHT11"):
-        future = producer.send(KAFKA_TOPIC_TEMP, json.dumps(jsonmsg))
+        jsonmsg["id"] = str(jsonmsg["id"]) + "_" + str(jsonmsg["monitorId"]);
+        future = producer.send(KAFKA_TOPIC_MONITOR, json.dumps(jsonmsg))
+        print("sent temp")
     elif(jsonmsg["id"] > 0):
-        future = producer.send(KAFKA_TOPIC_BIOMETRIC, json.dumps(jsonmsg))
+        jsonmsg["id"] = "Patient_" + str(jsonmsg["id"]);
+        future = producer.send(KAFKA_TOPIC_PATIENTS, json.dumps(jsonmsg))
         
     # Block for 'synchronous' sends
     #try:
@@ -54,3 +58,4 @@ mqttc.on_connect = on_connect
 mqttc.on_message = on_message
 mqttc.connect(MQTT_BROKER_IP, int(MQTT_BROKER_PORT))
 mqttc.loop_forever()
+
