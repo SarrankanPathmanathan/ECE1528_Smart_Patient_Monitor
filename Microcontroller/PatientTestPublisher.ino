@@ -9,9 +9,10 @@ const char*ssid = "PATHWIFI";
 const char*pass = "4A6F776427A2";
 const char*mqttBroker = "192.168.2.87";
 const int mqttPort =1883;
-
+const int monitorID = 12345;
 WiFiClient espClient1;
 PubSubClient client(espClient1);
+
 
 //All required PIN Declarations
 
@@ -23,7 +24,7 @@ long duration;
 int distance;
 
 //Temperature
-const char*temperature_id = "arduino_DHT11"; 
+const char*temperature_id = "arduino_DHT11";
 #define DHTPIN D12     // NodeMCU digital pin D3
 #define DHTTYPE DHT11   // DHT 11
 DHT dht(DHTPIN, DHTTYPE);// Initialize DHT sensor.
@@ -167,6 +168,7 @@ void getAndSendTemperatureAndHumidityData() {
   doc["id"] = temperature_id;
   doc["temperature"] = temperature;
   doc["humidity"] = humidity;
+  doc["monitorId"] = monitorID;
   char attributes[100];
   serializeJson(doc, attributes);
   client.publish( "v1/DHTsensor/roomtempandhumidity", attributes );
@@ -190,6 +192,7 @@ void getAndSendDistanceData() {
   DynamicJsonDocument doc(1024);
   doc["id"] = distance_id;
   doc["distance"] = distance;
+  doc["monitorId"] = monitorID;
   char attributes[100];
   serializeJson(doc, attributes);
   client.publish( "v1/Ultrasonicsensor/distance", attributes );
@@ -279,6 +282,7 @@ int getFingerprintIDez() {
   Serial.print(" with confidence of "); Serial.println(finger.confidence);
   DynamicJsonDocument doc(1024);
   doc["id"] = finger.fingerID;
+  doc["monitorID"] = monitorID;
   char attributes[100];
   serializeJson(doc, attributes);
   client.publish( "v1/Adafruit/fingerprint", attributes );
