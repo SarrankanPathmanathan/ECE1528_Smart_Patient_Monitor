@@ -15,7 +15,7 @@ services:
     - "9093"
     environment:
       #PC IP ADDRESS FOR WIFI CONNECTION
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://192.168.2.47:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://192.168.2.92:9092
       #˓→(1) Modify EXTERNAL ip address
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
@@ -33,5 +33,5 @@ services:
       - FIREBASE_URL=https://ece1528-43d8d-default-rtdb.firebaseio.com 
       - KAFKA_BROKER_URL=kafka:9093
       - DATABASE_REF=root
-      - TOPICS=Distance,Biometric,Temperature,LED,Motion,LAB4
+      - TOPICS=Patients,Monitoring_Devices,Test_Results
   ########################################################
