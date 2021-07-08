@@ -15,6 +15,7 @@ KAFKA_TOPIC_PATIENTS = "Patients"
 MQTT_TOPIC_DISTANCE="v1/Ultrasonicsensor/distance"
 MQTT_TOPIC_TESTS = "v1/test/testData"
 MQTT_TOPIC_TEMP = "v1/DHTsensor/roomtempandhumidity"
+MQTT_TOPIC_HEART = "v1/pulseSensor/Heart"
 MQTT_TOPIC_BIOMETRIC = "v1/Adafruit/fingerprint"
 
 MQTT_BROKER_IP="192.168.2.87"
@@ -26,6 +27,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_TOPIC_TEMP)
     client.subscribe(MQTT_TOPIC_BIOMETRIC)
     client.subscribe(MQTT_TOPIC_TESTS)
+    client.subscribe(MQTT_TOPIC_HEART)
 
 def on_message(client, userdata, message):
     jsonmsg=json.loads(message.payload)
@@ -40,6 +42,9 @@ def on_message(client, userdata, message):
         jsonmsg["id"] = str(jsonmsg["id"]) + "_" + str(jsonmsg["monitorId"])
         future = producer.send(KAFKA_TOPIC_MONITOR, json.dumps(jsonmsg))
         print("sent temp")
+    elif(jsonmsg["id"] == "arduino_PulseSensor"):
+        jsonmsg["id"] = str(jsonmsg["id"]) + "_" + str(jsonmsg["monitorId"])
+        future = producer.send(KAFKA_TOPIC_MONITOR, json.dumps(jsonmsg))
     elif(jsonmsg["status"] == "Completed"):
         jsonmsg["id"] = str(jsonmsg["id"]) + "_" + str(jsonmsg["monitorId"])
         future = producer.send(KAFKA_TOPIC_TESTS, json.dumps(jsonmsg))
