@@ -122,7 +122,13 @@ DynamicJsonDocument reactionTimeTest(){
     }
     unsigned long reactionTime = millis() - currentTime;
     response["reactionTime"] = reactionTime;
+    HM19.println("Your reaction time is ");
+    HM19.print(String(reactionTime));
+    HM19.print("ms");
     HM19.println("Reaction Time Recorded :) Test 1/4 completed");
+    HM19.println("####End of Reaction Time####");
+    HM19.println(" ");
+    HM19.println(" ");
     reactionTimeCompleted = true;
     instructed = false;
     return response;   
@@ -142,7 +148,16 @@ DynamicJsonDocument temperatureHumidityTest(){
   tempHumidityCompleted = true;
   instructed = false;
   digitalWrite(LEDBLUE, HIGH);
+  HM19.print("Your temperature is ");
+  HM19.print(String(temperature));
+  HM19.print(" degress Celsius");
+  HM19.println("The humidity is ");
+  HM19.print(String(humidity));
+  HM19.print("%");
   HM19.println("Temperature and Humidity Recorded :) Test 2/4 completed");
+  HM19.println("####End of Temperature and Humidity####");
+  HM19.println(" ");
+  HM19.println(" ");
   return response;
 }
 
@@ -154,7 +169,12 @@ DynamicJsonDocument HeartRateTest(){
   response["BPM"] = BPM;
   instructed = false;
   digitalWrite(LEDBLUE, HIGH);
+  HM19.print("Your BPM is ");
+  HM19.print(String(BPM));
   HM19.println("Heart Rate Recorded :) Test 3/4 completed");
+  HM19.println("####End of Heart Rate####");
+  HM19.println(" ");
+  HM19.println(" ");
   heartRateCompleted = true;
   return response;
 }
@@ -166,7 +186,10 @@ void loop() {
   if(testBegin == true){
     if(!reactionTimeCompleted){
       if(!instructed){
-        HM19.println("Please remain seated.");
+        HM19.println("###########Time for your test!#############");
+        HM19.println("Please remain seated throughout the test.");
+        HM19.println(" ");
+        HM19.println("###########Test #1 Reaction Time#############");
         HM19.println("Place your right hand infront of the distance sensor until the BLUE LED has turned on");
         HM19.println("Remove your hand once the BLUE LED has turned off");
         instructed = true;
@@ -175,6 +198,7 @@ void loop() {
     }
     if(!tempHumidityCompleted && reactionTimeCompleted){
       if(!instructed){
+        HM19.println("###########Test #2 Temperature and Humidity#############");
         HM19.println("Please place your right index finger on the temperature sensor");
         delay(1000);
         HM19.println("Please wait until the BLUE LED has turned on");
@@ -186,6 +210,7 @@ void loop() {
     }
     if(!heartRateCompleted && tempHumidityCompleted && reactionTimeCompleted){
       if(!instructed){
+        HM19.println("###########Test #3 Heart Rate#############");
         HM19.println("Please place a finger on the pulse sensor to measure BPM");
         delay(1000);
         HM19.println("Use the enclosure to ensure obscurity between sensor and finger");
@@ -197,11 +222,13 @@ void loop() {
       delay(2000);
       digitalWrite(LEDBLUE, LOW);
     } 
-    if(tempHumidityCompleted && reactionTimeCompleted && heartRateCompleted && !done){
+    if(tempHumidityCompleted && reactionTimeCompleted && heartRateCompleted){
       sendTestData(reactionTime,temperatureHumidity,heartRate);
-      done = true;
       testBegin = false;
+      HM19.println("###########END OF TEST THANKS!#############");
+      delay(1000);
     }
+    client.loop();
   }
   client.loop();
 }
