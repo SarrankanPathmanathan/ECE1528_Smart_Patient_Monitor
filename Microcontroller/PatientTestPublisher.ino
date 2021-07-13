@@ -7,16 +7,16 @@
  #include <Ticker.h>
 
 
-const char*ssid = "PATHWIFI";
-const char*pass = "4A6F776427A2";
-const char*mqttBroker = "192.168.2.87";
+const char*ssid = "Sarran Home";
+const char*pass = "papaketherma#5690";
+const char*mqttBroker = "192.168.0.20";
 const int mqttPort =1883;
 const int monitorID = 12345;
 WiFiClient espClient1;
 PubSubClient client(espClient1);
 int status = WL_IDLE_STATUS;
 unsigned long lastSend;
-const int sendPeriod = 1000;
+const int sendPeriod = 3000;
 
 //All required Sensor Declarations
 
@@ -81,13 +81,13 @@ void setup() {
   dht.begin();
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
+  pinMode(blinkPin,OUTPUT);
   delay(10);
   client.setServer(mqttBroker,mqttPort);
   client.subscribe("v1/distance/reactionTime");
   lastSend = 0;
   initBiometric();
   isAuthorizedPatient();
-  pinMode(blinkPin,OUTPUT);
   interruptSetup();
 }
 
@@ -137,15 +137,16 @@ void loop() {
       if(doc["id"] != "error"){
         sendSensorData(temperatureTopic,doc);
       }
-      lastSend = millis();
-    }
-    //getHeartBeatData();
-    doc = getHeartBPM();
-    if(doc["id"] != "error"){
+       doc = getHeartBPM();
+      if(doc["id"] != "error"){
       sendSensorData(heartTopic,doc);
     }
+      lastSend = millis();
+    }
+    getHeartBeatData();
     client.loop(); 
 }
+
 
 void sendSensorData(const char* topic, DynamicJsonDocument jsonPayload){
   char attributes[1000];
@@ -168,19 +169,8 @@ DynamicJsonDocument getTemperatureAndHumidityData() {
     doc["id"] = "error";
     return doc;
   }
-  /*Serial.print("Humidity: ");
-  Serial.print(h);
-  Serial.print(" %\n");
-  Serial.print("Temperature: ");
-  Serial.print(t);
-  Serial.print("*C\n");*/
   String temperature = String(t);
   String humidity = String(h);// Just debug messages
-  /*Serial.print( "Sending temperature and humidity : [" );
-  Serial.print( temperature ); 
-  Serial.print( "," );
-  Serial.print( humidity );
-  Serial.print( "]   -> " );*/
   // Prepare a JSON payload string
   doc["id"] = temperature_id;
   doc["temperature"] = temperature;
@@ -192,7 +182,6 @@ DynamicJsonDocument getTemperatureAndHumidityData() {
 
 
 DynamicJsonDocument getDistanceData() {
-  //Serial.println("Collecting ulstrasonic sensor data.");
   digitalWrite(trigPin, LOW);
   delayMicroseconds(10);
   digitalWrite(trigPin, HIGH);
@@ -200,11 +189,6 @@ DynamicJsonDocument getDistanceData() {
   digitalWrite(trigPin, LOW);
   duration=pulseIn(echoPin, HIGH);
   distance=duration*0.034/2;
-  /*Serial.print("Distance: ");
-  Serial.println(distance);// Just debug messages
-  Serial.print( "Sending distance data : [" );
-  Serial.print( distance );
-  Serial.print( "]   -> " );// Prepare a JSON payload string*/
   DynamicJsonDocument doc(1024);
   doc["id"] = distance_id;
   doc["distance"] = distance;
@@ -250,7 +234,7 @@ DynamicJsonDocument getHeartBPM(){
         //serialOutputWhenBeatHappens();         // A Beat Happened, Output that to serial.
         QS = false;                            // reset the Quantified Self flag for next time
     }
-  if(BPM > 40 && BPM < 150){
+  if(BPM >=0){
     doc["id"] = pulse_id;
     doc["bpm"] = BPM;
     doc["monitorId"] = monitorID;
@@ -363,17 +347,10 @@ void ISRTr() {
 }
 
 void InitWiFi() {
-  //Serial.print("Connecting to ");
-  //Serial.println(ssid);
   WiFi.begin(ssid,pass);
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
-   // Serial.println(".");
   }
-  //Serial.println("");
-  //Serial.println("WiFi connected");
-  //Serial.println("IP Address is: ");
-  //Serial.println(WiFi.localIP());
 }
 
 void reconnect() {
@@ -384,18 +361,11 @@ void reconnect() {
       WiFi.begin(ssid,pass);
       while(WiFi.status() != WL_CONNECTED) {
         delay(500);
-        //Serial.print(".");
       }
-      //Serial.println("Connected to AP");
     }
-    //Serial.print("Connecting to Mosquitto broker");
-   // Attempt to connect (clientId, username, password)
     if( client.connect("ESP8266 Device") ) {
         //Serial.println( "[DONE]" );
     }else{
-      //Serial.print( "[FAILED] [ rc = " );
-      //Serial.print( client.state() );
-      //Serial.println( " : retrying in 5 seconds]" );
       // Wait 5 seconds before retrying
       delay( 5000 );
       }
