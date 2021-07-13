@@ -6,12 +6,13 @@
 #include <EEPROM.h>
 
 
-const char*ssid = "PATHWIFI";
-const char*pass = "4A6F776427A2";
-const char*mqttBroker = "192.168.2.87";
+const char*ssid = "Sarran Home";
+const char*pass = "papaketherma#5690";
+const char*mqttBroker = "192.168.0.20";
 const int mqttPort =1883;
 const int LEDBLUE = D13; // D4 - gpio2
 const int LEDGREEN = D10;
+const int buzzer = D14;
 SoftwareSerial HM19;
 
 ///TEST VARIABLES//
@@ -46,6 +47,7 @@ void setup(){
   HM19.begin(9600, SWSERIAL_8N1, D2, D3, false, 95, 11); // set HM10 serial at 9600 baud rate
   pinMode(LEDBLUE, OUTPUT);
   pinMode(LEDGREEN, OUTPUT);
+  pinMode(buzzer,OUTPUT);
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
@@ -76,6 +78,15 @@ void setup(){
   client.subscribe("v1/test/testData");
   client.subscribe("v1/pulseSensor/Heart");
   digitalWrite(LEDGREEN,HIGH); //Ready.
+}
+
+void buzzAlert(int beeps){
+  for(int i=0; i < beeps; i++){
+  tone(buzzer,1500);
+  delay(1000);
+  noTone(buzzer);
+  delay(1000);
+  }
 }
 
 void ReceivedMessage(char*topic, byte*payload, unsigned int length) {
@@ -124,8 +135,8 @@ DynamicJsonDocument reactionTimeTest(){
     response["reactionTime"] = reactionTime;
     HM19.println("Your reaction time is ");
     HM19.print(String(reactionTime));
-    HM19.print("ms");
-    HM19.println("Reaction Time Recorded :) Test 1/4 completed");
+    HM19.print("ms. ");
+    HM19.println(" Reaction Time Recorded :) Test 1/3 completed");
     HM19.println("####End of Reaction Time####");
     HM19.println(" ");
     HM19.println(" ");
@@ -150,11 +161,12 @@ DynamicJsonDocument temperatureHumidityTest(){
   digitalWrite(LEDBLUE, HIGH);
   HM19.print("Your temperature is ");
   HM19.print(String(temperature));
-  HM19.print(" degress Celsius");
-  HM19.println("The humidity is ");
+  HM19.print(" degress Celsius.");
+  HM19.println(" The humidity is ");
   HM19.print(String(humidity));
   HM19.print("%");
-  HM19.println("Temperature and Humidity Recorded :) Test 2/4 completed");
+  HM19.println("");
+  HM19.println("Temperature and Humidity Recorded :) Test 2/3 completed");
   HM19.println("####End of Temperature and Humidity####");
   HM19.println(" ");
   HM19.println(" ");
@@ -171,7 +183,8 @@ DynamicJsonDocument HeartRateTest(){
   digitalWrite(LEDBLUE, HIGH);
   HM19.print("Your BPM is ");
   HM19.print(String(BPM));
-  HM19.println("Heart Rate Recorded :) Test 3/4 completed");
+  HM19.print(" ");
+  HM19.println("Heart Rate Recorded :) Test 3/3 completed");
   HM19.println("####End of Heart Rate####");
   HM19.println(" ");
   HM19.println(" ");
@@ -225,6 +238,9 @@ void loop() {
     if(tempHumidityCompleted && reactionTimeCompleted && heartRateCompleted){
       sendTestData(reactionTime,temperatureHumidity,heartRate);
       testBegin = false;
+      tempHumidityCompleted = false;
+      reactionTimeCompleted = false;
+      heartRateCompleted = false;
       HM19.println("###########END OF TEST THANKS!#############");
       delay(1000);
     }
