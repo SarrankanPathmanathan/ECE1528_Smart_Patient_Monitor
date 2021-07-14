@@ -33,3 +33,6 @@ The **doctor** can retrieve their patient's results via their own android app wh
 
 ![Smart Patient Monitor_bb](https://user-images.githubusercontent.com/8919416/125636326-4f2efdb4-5dc9-4992-9e6c-37636fb9738e.png)
 
+# Patient Instruction Stream via BLE
+
+![217629556_4378074202313501_6731666657314229874_n](https://user-images.githubusercontent.com/8919416/125673137-148aace8-6ba3-4d4f-81a6-d26ce8bc54f9.jpg)
