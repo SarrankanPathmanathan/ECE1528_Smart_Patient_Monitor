@@ -220,6 +220,7 @@ int getFingerprintIDez() {
   return finger.fingerID; 
 }
 
+//Derived routine from 👍 https://github.com/tolgahanakgun/ESP8266-Heartbeat-Sensor/blob/master/ESP8266_Heartbeat_Sensor.ino
 DynamicJsonDocument getHeartBPM(){
   DynamicJsonDocument doc(1024);
   if(msTime>10000)
