@@ -17,6 +17,7 @@ The **doctor** can retrieve their patient's results via their own android app wh
  - DHT11 Temperature and Humidity Sensor
  - Ultrasonic Distance Sensor
  - Raspberry Pi (Gateway)
+ - Passive Buzzer
 
 # Software
  - Arduino IDE
