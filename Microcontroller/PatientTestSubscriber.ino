@@ -88,7 +88,6 @@ void buzzAlert(int beeps){
   delay(150);
   client.loop();
   noTone(buzzer);
-  delay(150);
   }
 }
 
@@ -238,7 +237,7 @@ void loop() {
         delay(1000);
         HM19.println("Use an enclosure to ensure obscurity between sensor and finger.");
         delay(1000);
-        HM19.println("Pleae wait until the BLUE LED has turned on.");
+        HM19.println("Please wait until the BLUE LED has turned on.");
         instructed = true;
       }
       heartRate = HeartRateTest();
@@ -277,3 +276,4 @@ void sendTestData(DynamicJsonDocument reactionTimeTest, DynamicJsonDocument temp
   EEPROM.put(addr,data);
   EEPROM.commit();
 }
+
