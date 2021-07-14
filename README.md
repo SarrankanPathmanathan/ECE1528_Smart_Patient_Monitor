@@ -28,7 +28,7 @@ The **doctor** can retrieve their patient's results via their own android app wh
  - Android Studio APK for Doctor APP
  - Arduino Bluetooth Serial Command Line for Patient Instructions
 
-#Circuit Design 
+# Circuit Design 
 
 ![Smart Patient Monitor_bb](https://user-images.githubusercontent.com/8919416/125636326-4f2efdb4-5dc9-4992-9e6c-37636fb9738e.png)
 
