@@ -12,7 +12,7 @@ const char*mqttBroker = "192.168.0.20";
 const int mqttPort =1883;
 const int LEDBLUE = D13; // D4 - gpio2
 const int LEDGREEN = D10;
-const int buzzer = D14;
+const int buzzer = D12;
 SoftwareSerial HM19;
 
 ///TEST VARIABLES//
@@ -78,14 +78,17 @@ void setup(){
   client.subscribe("v1/test/testData");
   client.subscribe("v1/pulseSensor/Heart");
   digitalWrite(LEDGREEN,HIGH); //Ready.
+  buzzAlert(1);
+
 }
 
 void buzzAlert(int beeps){
   for(int i=0; i < beeps; i++){
   tone(buzzer,1500);
-  delay(1000);
+  delay(150);
+  client.loop();
   noTone(buzzer);
-  delay(1000);
+  delay(150);
   }
 }
 
@@ -133,15 +136,18 @@ DynamicJsonDocument reactionTimeTest(){
     }
     unsigned long reactionTime = millis() - currentTime;
     response["reactionTime"] = reactionTime;
-    HM19.println("Your reaction time is ");
+    HM19.println(" ");
+    HM19.print("Your reaction time is ");
     HM19.print(String(reactionTime));
     HM19.print("ms. ");
-    HM19.println(" Reaction Time Recorded :) Test 1/3 completed");
+    HM19.println(" ");
+    HM19.println("Reaction Time Recorded :) Test 1/3 completed.");
     HM19.println("####End of Reaction Time####");
     HM19.println(" ");
     HM19.println(" ");
     reactionTimeCompleted = true;
     instructed = false;
+    buzzAlert(1);
     return response;   
   }else{
      reactionTimeCompleted = false;
@@ -159,17 +165,19 @@ DynamicJsonDocument temperatureHumidityTest(){
   tempHumidityCompleted = true;
   instructed = false;
   digitalWrite(LEDBLUE, HIGH);
+  HM19.println(" ");
   HM19.print("Your temperature is ");
   HM19.print(String(temperature));
-  HM19.print(" degress Celsius.");
-  HM19.println(" The humidity is ");
+  HM19.println(" degress Celsius.");
+  HM19.print("The humidity is ");
   HM19.print(String(humidity));
   HM19.print("%");
-  HM19.println("");
+  HM19.println(" ");
   HM19.println("Temperature and Humidity Recorded :) Test 2/3 completed");
   HM19.println("####End of Temperature and Humidity####");
   HM19.println(" ");
   HM19.println(" ");
+  buzzAlert(1);
   return response;
 }
 
@@ -181,13 +189,15 @@ DynamicJsonDocument HeartRateTest(){
   response["BPM"] = BPM;
   instructed = false;
   digitalWrite(LEDBLUE, HIGH);
+  HM19.println(" ");
   HM19.print("Your BPM is ");
   HM19.print(String(BPM));
-  HM19.print(" ");
+  HM19.println(" ");
   HM19.println("Heart Rate Recorded :) Test 3/3 completed");
   HM19.println("####End of Heart Rate####");
   HM19.println(" ");
   HM19.println(" ");
+  buzzAlert(1);
   heartRateCompleted = true;
   return response;
 }
@@ -203,18 +213,18 @@ void loop() {
         HM19.println("Please remain seated throughout the test.");
         HM19.println(" ");
         HM19.println("###########Test #1 Reaction Time#############");
-        HM19.println("Place your right hand infront of the distance sensor until the BLUE LED has turned on");
-        HM19.println("Remove your hand once the BLUE LED has turned off");
+        HM19.println("Place your right hand infront of the distance sensor until the BLUE LED has turned on.");
+        HM19.println("Remove your hand once the BLUE LED has turned off.");
         instructed = true;
       }
      reactionTime = reactionTimeTest();
     }
     if(!tempHumidityCompleted && reactionTimeCompleted){
       if(!instructed){
-        HM19.println("###########Test #2 Temperature and Humidity#############");
-        HM19.println("Please place your right index finger on the temperature sensor");
+        HM19.println("###########Test #2 Temp and Humid#############");
+        HM19.println("Please place your right index finger on the temperature sensor.");
         delay(1000);
-        HM19.println("Please wait until the BLUE LED has turned on");
+        HM19.println("Please wait until the BLUE LED has turned on.");
         instructed = true;
       }
       temperatureHumidity = temperatureHumidityTest();
@@ -224,11 +234,11 @@ void loop() {
     if(!heartRateCompleted && tempHumidityCompleted && reactionTimeCompleted){
       if(!instructed){
         HM19.println("###########Test #3 Heart Rate#############");
-        HM19.println("Please place a finger on the pulse sensor to measure BPM");
+        HM19.println("Please place a finger on the pulse sensor to measure BPM.");
         delay(1000);
-        HM19.println("Use the enclosure to ensure obscurity between sensor and finger");
+        HM19.println("Use an enclosure to ensure obscurity between sensor and finger.");
         delay(1000);
-        HM19.println("Pleae wait until the BLUE LED has turned on");
+        HM19.println("Pleae wait until the BLUE LED has turned on.");
         instructed = true;
       }
       heartRate = HeartRateTest();
