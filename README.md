@@ -9,7 +9,7 @@ The **doctor** can retrieve their patient's results via their own android app wh
 
 # Hardware
  - 2x WeMos D1R1 Microcontrollers (Sensor Actuator publishing)
- -  Blue status LED
+ - Blue status LED
  - Red status LED
  - Green Status LED
  - HM-19 BLE module
@@ -27,6 +27,7 @@ The **doctor** can retrieve their patient's results via their own android app wh
  - Relevant sensor libraries and tutorials for interrupts
  - Android Studio APK for Doctor APP
  - Arduino Bluetooth Serial Command Line for Patient Instructions
+ - Google Firebase (Realtime Database, Cloud Functions)
 
 # Circuit Design 
 
