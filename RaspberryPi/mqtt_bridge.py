@@ -5,7 +5,7 @@ from kafka.errors import KafkaError
 import logging
 from datetime import datetime;
 
-KAFKA_URL = '192.168.2.92'
+KAFKA_URL = '192.168.0.19'
 KAFKA_PORT = '9092'
 producer = KafkaProducer(bootstrap_servers=KAFKA_URL+':'+KAFKA_PORT, value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 KAFKA_TOPIC_MONITOR = "Monitoring_Devices"
@@ -18,7 +18,7 @@ MQTT_TOPIC_TEMP = "v1/DHTsensor/roomtempandhumidity"
 MQTT_TOPIC_HEART = "v1/pulseSensor/Heart"
 MQTT_TOPIC_BIOMETRIC = "v1/Adafruit/fingerprint"
 
-MQTT_BROKER_IP="192.168.2.87"
+MQTT_BROKER_IP="192.168.0.20"
 MQTT_BROKER_PORT=1883
 
 def on_connect(client, userdata, flags, rc):
@@ -31,22 +31,20 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, message):
     jsonmsg=json.loads(message.payload)
-    print(jsonmsg)
     dateTimeObj = datetime.now()
     jsonmsg["timestamp"] = dateTimeObj = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S)")
     if(jsonmsg["id"] == "arduino_Distance"):
         jsonmsg["id"] = str(jsonmsg["id"]) + "_" + str(jsonmsg["monitorId"])
         future = producer.send(KAFKA_TOPIC_MONITOR, json.dumps(jsonmsg))
-        print("sent distance")
     elif(jsonmsg["id"] == "arduino_DHT11"):
         jsonmsg["id"] = str(jsonmsg["id"]) + "_" + str(jsonmsg["monitorId"])
         future = producer.send(KAFKA_TOPIC_MONITOR, json.dumps(jsonmsg))
-        print("sent temp")
     elif(jsonmsg["id"] == "arduino_PulseSensor"):
         jsonmsg["id"] = str(jsonmsg["id"]) + "_" + str(jsonmsg["monitorId"])
         future = producer.send(KAFKA_TOPIC_MONITOR, json.dumps(jsonmsg))
     elif(jsonmsg["status"] == "Completed"):
         jsonmsg["id"] = str(jsonmsg["id"]) + "_" + str(jsonmsg["monitorId"])
+        print(jsonmsg)
         future = producer.send(KAFKA_TOPIC_TESTS, json.dumps(jsonmsg))
     elif(jsonmsg["id"] > 0):
         jsonmsg["id"] = "Patient_" + str(jsonmsg["id"]);
