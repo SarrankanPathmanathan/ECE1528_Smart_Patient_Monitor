@@ -17,6 +17,7 @@ PubSubClient client(espClient1);
 int status = WL_IDLE_STATUS;
 unsigned long lastSend;
 const int sendPeriod = 3000;
+const char*patient = "";
 
 //All required Sensor Declarations
 
@@ -177,6 +178,7 @@ DynamicJsonDocument getTemperatureAndHumidityData() {
   doc["humidity"] = humidity;
   doc["monitorId"] = monitorID;
   doc["status"] = "OK";
+  doc["currentUser"] = patient;
   return doc;
 }
 
@@ -193,6 +195,7 @@ DynamicJsonDocument getDistanceData() {
   doc["id"] = distance_id;
   doc["distance"] = distance;
   doc["monitorId"] = monitorID;
+  doc["currentUser"] = patient;
   doc["status"] = "OK";
   return doc;
 }
@@ -214,13 +217,17 @@ int getFingerprintIDez() {
   doc["id"] = finger.fingerID;
   doc["monitorID"] = monitorID;
   doc["status"] = "OK";
+  if (finger.fingerID == 1){
+    patient = "Patient_1";
+  }else{
+    patient = "Patient_2";
+  }
   char attributes[100];
   serializeJson(doc, attributes);
   client.publish( "v1/Adafruit/fingerprint", attributes );
   return finger.fingerID; 
 }
 
-//Derived routine from 👍 https://github.com/tolgahanakgun/ESP8266-Heartbeat-Sensor/blob/master/ESP8266_Heartbeat_Sensor.ino
 DynamicJsonDocument getHeartBPM(){
   DynamicJsonDocument doc(1024);
   if(msTime>10000)
@@ -240,6 +247,7 @@ DynamicJsonDocument getHeartBPM(){
     doc["bpm"] = BPM;
     doc["monitorId"] = monitorID;
     doc["status"] = "OK";
+    doc["currentUser"] = patient;
   }else{
     doc["id"] = "error";
   }
