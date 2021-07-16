@@ -36,3 +36,21 @@ The **doctor** can retrieve their patient's results via their own android app wh
 # Patient Instruction Stream via BLE
 
 ![217629556_4378074202313501_6731666657314229874_n](https://user-images.githubusercontent.com/8919416/125673137-148aace8-6ba3-4d4f-81a6-d26ce8bc54f9.jpg)
+
+
+# Firebase Data Model
+
+<img width="205" alt="datamodel" src="https://user-images.githubusercontent.com/8919416/125973839-c3a84cae-d0d0-4c6b-98fc-e0a54feae88d.PNG">
+
+# Instructions
+
+1. Build the circuit as shown above.
+2. Apply PatientTestPublisher.ino to Sensor Publisher Microcontroller.
+3. Apply PatientTestSubscriber.ino to Sensor Subscriber Microntroller.
+4. Setup Kafka, Zookeeper and Kakfa-Firebase Aggregator on Docker.
+5. Run MQTT broker on raspberry pi and run MQTT-bridge.py.
+6. Ensure communication is possible between raspberry pi and Docker instances (WSL)
+7. Upon correct fingerprint, data model is populated into Firebase Real-time Database given it has been setup against the Kafka-Firebase Aggregator.
+
+
+
