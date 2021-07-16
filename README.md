@@ -26,6 +26,7 @@ The **doctor** can retrieve their patient's results via their own android app wh
  - Docker (Apache Kafka + Zookeeper)
  - Relevant sensor libraries and tutorials for interrupts
  - Android Studio APK for Doctor APP
+ - Node.js Express Web Application
  - Arduino Bluetooth Serial Command Line for Patient Instructions
  - Google Firebase (Realtime Database, Cloud Functions)
 
