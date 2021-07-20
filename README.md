@@ -21,9 +21,9 @@ The **doctor** can retrieve their patient's results via their own android app wh
 
 # Software
  - Arduino IDE
- - Apache Kafka (Kafka-Firebase Aggregation)
+ - Apache Kafka 
  - Python MQTT-Kafka Bridge
- - Docker (Apache Kafka + Zookeeper)
+ - Docker (Apache Kafka + Zookeeper + Firebase Aggregator)
  - Relevant sensor libraries and tutorials for interrupts
  - Android Studio APK for Doctor APP
  - Node.js Express Web Application
