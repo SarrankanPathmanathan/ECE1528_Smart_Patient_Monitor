@@ -1,0 +1,45 @@
+{
+  "name": "cnapi",
+  "version": "1.0.0",
+  "description": "cnapi project",
+  "main": "index.js",
+  "dependencies": {
+    "apify": "^0.20.4",
+    "async": "^3.2.0",
+    "axios": "^0.19.2",
+    "chai": "^4.3.4",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "jsdom": "^16.2.2",
+    "kafkajs": "^1.15.0",
+    "kue": "^0.11.6",
+    "kue-ui": "^0.1.0",
+    "kue-ui-express": "^1.1.1",
+    "mocha-junit-reporter": "^2.0.0",
+    "mysql": "^2.18.1",
+    "passport": "^0.4.1",
+    "passport-auth0": "^1.3.3",
+    "pug": "^3.0.0",
+    "puppeteer": "^3.3.0",
+    "pusher": "^5.0.0",
+    "redis": "^3.0.2",
+    "redis-cli": "^1.4.0",
+    "reds": "^1.0.0",
+    "request": "^2.88.2",
+    "socket.io": "^4.1.3",
+    "superagent": "^5.2.2"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.12",
+    "mocha": "^8.3.2",
+    "mocha-parallel-tests": "^2.3.0",
+    "nodemon": "^2.0.4"
+  },
+  "scripts": {
+    "dev": "nodemon ./index.js",
+    "ui": "browser-sync start --proxy=localhost:8000 --files='**/*.css, **/*.pug, **/*.js' --ignore=node_modules --reload-delay 10 --no-ui --no-notify"
+  },
+  "author": "Sarran",
+  "license": "ISC"
+}

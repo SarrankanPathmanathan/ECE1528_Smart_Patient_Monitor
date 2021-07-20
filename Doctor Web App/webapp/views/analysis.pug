@@ -1,0 +1,22 @@
+extends layout
+
+block layout-content
+    div.View.UserView
+        h1.Banner #{userProfile.name} Analysis
+        div.Table
+            div.Title
+                h2 Analysis for Patient ID #{analysis.id}
+            pre.Details This patient has #{analysis.Incomplete.length} incomplete tests.
+            pre.Details=JSON.stringify(analysis.Incomplete,null,2)
+            pre.Details Their Resting BPM shows #{analysis.AbnormalBPM.length} abnormalities.
+            pre.Details Their Reaction Time shows #{analysis.AbnormalReactionTime.length} abnormalities.
+            pre.Details Their Temperature shows #{analysis.AbnormalTemperature.length} abnormalities.
+            pre.Details Overall, they completed #{patientData.length} tests.
+        div.NavButtons
+            a(href="/")
+                div.NavButton Home
+            a(href="/charts")
+                div.NavButton Historic Charts
+            a(href="/logout")
+                div.NavButton Log out
+

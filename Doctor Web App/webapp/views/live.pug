@@ -1,0 +1,175 @@
+extends layout
+
+block layout-content
+    script(src="http://localhost:3000/socket.io/socket.io.js")
+    script(src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.7.1/firebase-database.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js")
+    script.
+        firebase.initializeApp({
+            databaseURL: "https://ece1528-43d8d-default-rtdb.firebaseio.com/"
+        });
+        var doctorData = firebase.database().ref("root/Doctor");
+        var alertData = firebase.database().ref("root/Alerts");
+        doctorData.set({
+            status:"IDLE",
+        })
+        var patient1AuthData = firebase.database().ref("root/Patients/Patient_1");
+        var patient2AuthData = firebase.database().ref("root/Patients/Patient_2");
+        var heartRateLiveData = firebase.database().ref("root/Monitoring_Devices/arduino_PulseSensor_12345");
+        var temperatureLiveData = firebase.database().ref("root/Monitoring_Devices/arduino_DHT11_12345");
+        var testResults = firebase.database().ref("root/Test_Results");
+        var date = new Date();
+        var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
+            .toISOString()
+            .split("T")[0];
+        function renderHeartChart(heartData) {
+            var ctx = document.getElementById("heartChart").getContext("2d");
+            var options = {};
+            heartChartRef = new Chart(ctx, {
+                type: "line",
+                data: heartData,
+                options: options,
+
+            });
+            return heartChartRef;
+        }
+        function renderTempChart(tempData) {
+            var ctx = document.getElementById("tempChart").getContext("2d");
+            var options = {};
+            heartChartRef = new Chart(ctx, {
+                type: "bar",
+                data: tempData,
+                options: options,
+                width: 1000,
+                height: 600
+
+            });
+            return heartChartRef;
+        }
+        var currentPatient;
+        function alertPatient(){
+            alertData.set({
+                patientAlerted: true
+            })
+            document.getElementById("Banner").innerHTML = dateString + " Monitor Live Status: Monitor " + "<span style='color: darkorange;'>ALERTED</span>"
+
+        }
+        var heartChartConfig = {
+            labels: [],
+            datasets: [
+                {
+                    label: "Patient Recorded BPM",
+                    fill: false,
+                    lineTension: 0.1,
+                    backgroundColor: "rgba(75,192,192,0.4)",
+                    borderColor: "rgba(75,192,192,1)",
+                    borderCapStyle: 'butt',
+                    borderDash: [],
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgba(75,192,192,1)",
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 1,
+                    pointHitRadius: 10,
+                    data: [],
+                    spanGaps: false,
+                    response:true,
+                    maintainAspectRatio:false
+                }
+            ]
+        };
+        var tempChartConfig = {
+            labels: [],
+            datasets: [
+                {
+                    label: "Patient Recorded Temperature",
+                    fill: false,
+                    lineTension: 0.1,
+                    backgroundColor: "rgba(75,192,192,0.4)",
+                    borderColor: "rgba(75,192,192,1)",
+                    borderCapStyle: 'butt',
+                    borderDash: [],
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgba(75,192,192,1)",
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 1,
+                    pointHitRadius: 10,
+                    data: [],
+                    spanGaps: false,
+                    response: true,
+                    maintainAspectRatio: false
+                }
+            ]
+        };
+        window.onload = function() {
+        var heartChartRef = renderHeartChart(heartChartConfig);
+        var tempChartRef = renderTempChart(tempChartConfig);
+        patient1AuthData.on('value',function(snapshot) {
+            currentPatient = "Patient 1";
+            document.getElementById("Banner").innerHTML = dateString + " Monitor Live Status:" +  currentPatient + " <span style='color: green;'>ACTIVE</span>"
+        });
+        patient2AuthData.on('value', function (snapshot) {
+            currentPatient = "Patient 2";
+            document.getElementById("Banner").innerHTML = dateString + " Monitor Live Status:" +  currentPatient + " <span style='color: green;'>ACTIVE</span>"
+        });
+
+        heartRateLiveData.on('value', function (snapshot) {
+            var heartData = snapshot.val();
+            document.getElementById("Banner").innerHTML = dateString + " Monitor Live Status:" +  heartData.currentUser + " <span style='color: green;'>ACTIVE</span>";
+            var timestamp = heartData.timestamp.substring(11);
+            heartChartConfig.labels.push(timestamp);
+            heartChartConfig.datasets[0].data.push(heartData.bpm);
+            heartChartRef.update();
+            doctorData.set({
+                status: "Viewing " + heartData.currentUser +  " Data",
+            })
+        });
+
+        temperatureLiveData.on('value', function (snapshot) {
+            var tempData = snapshot.val();
+            document.getElementById("Banner").innerHTML = dateString + " Monitor Live Status:" +  tempData.currentUser + " <span style='color: green;'>ACTIVE</span>"
+            var timestamp = tempData.timestamp.substring(11);
+            tempChartConfig.labels.push(timestamp);
+            tempChartConfig.datasets[0].data.push(tempData.temperature);
+            tempChartRef.update();
+            doctorData.set({
+                status: "Viewing " + tempData.currentUser + " Data",
+            })
+        });
+        testResults.on('value', function (snapshot) {
+            document.getElementById("Banner").innerHTML = dateString + " Monitor Live Status:" + " <span style='color: red;'>IDLE</span>";
+        });
+        }
+    div.View.UserView
+            h1.Banner
+              div(id="Banner")
+            div(style="color: white; background-color: white;")
+              canvas(id="heartChart", width="1500", height="250")
+            div(style="color: white; background-color: white;")
+              canvas(id="tempChart",width="1500", height="250")
+            div.NavButtons
+                a(href="/")
+                    div.NavButton Home
+                a(href="/alert")
+                    button(class='NavButton' onclick='alertPatient()') Send Alert
+
+
+
+
+
+
+
+
+

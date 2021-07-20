@@ -1,0 +1,46 @@
+extends layout
+
+block layout-content
+    script.
+        updateVisualQueue('#{userProfile.nickname}');
+    div.View.UserView
+        h1.Banner #{userProfile.name} Summary
+        br
+        div.Title
+        br
+        h1.mainText Completed Tests
+        br
+        div.Table#TestResults
+            table
+                thead
+                    tr
+                        th Test ID
+                        th TimeStamp
+                        th BPM
+                        th Reaction Time (ms)
+                        th Temperature
+                        th Humidity
+                        th Status
+                tbody
+                    each test in testData
+                        tr
+                        td #{test.id}
+                        td #{test.timestamp}
+                        td #{test.bpm}
+                        td #{test.reactionTime}
+                        td #{test.temperature}
+                        td #{test.humidity}
+                        td #{test.status}
+        div.NavButtons
+            a(href="/")
+                div.NavButton Back to Patients
+            a(href="/analyze")
+                div.NavButton Perform Analysis
+            a(href="/logout")
+                div.NavButton Log out
+
+
+
+
+
+

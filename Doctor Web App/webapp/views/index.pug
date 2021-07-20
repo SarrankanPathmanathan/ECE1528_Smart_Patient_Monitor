@@ -1,0 +1,19 @@
+extends layout
+
+block layout-content
+
+    div.View.WelcomeView
+        h1.Banner Smart Patient Monitor
+        div.NavButtons
+                    if isAuthenticated
+                        a(href="/patient/1")
+                            div.NavButton Patient 1
+                        a(href="/patient/2")
+                            div.NavButton Patient 2
+                        a(href="/live")
+                            div.NavButton Monitor Status
+                        a(href="/logout")
+                            div.NavButton Logout
+                    else
+                        a(href="/login")
+                            div.NavButton Log in
