@@ -32,7 +32,8 @@ The **doctor** can retrieve their patient's results via their own android app wh
 
 # Circuit Design 
 
-![Smart Patient Monitor_bb](https://user-images.githubusercontent.com/8919416/126339068-4c5c2ca4-794d-46db-8ed7-ffc95ae4c3c1.png)
+![Smart Patient Monito2r_bb](https://user-images.githubusercontent.com/8919416/126339795-52cf4294-9d41-4075-819e-a30671d63507.png)
+
 
 # Patient Instruction Stream via BLE
 
