@@ -12,6 +12,7 @@ const char*mqttBroker = "192.168.0.20";
 const int mqttPort =1883;
 const int LEDBLUE = D13; // D4 - gpio2
 const int LEDGREEN = D10;
+const int LEDYELLOW = D11;
 const int buzzer = D12;
 SoftwareSerial HM19;
 
@@ -47,6 +48,7 @@ void setup(){
   HM19.begin(9600, SWSERIAL_8N1, D2, D3, false, 95, 11); // set HM10 serial at 9600 baud rate
   pinMode(LEDBLUE, OUTPUT);
   pinMode(LEDGREEN, OUTPUT);
+  pinMode(LEDYELLOW, OUTPUT);
   pinMode(buzzer,OUTPUT);
   Serial.println();
   Serial.print("Connecting to ");
@@ -77,7 +79,9 @@ void setup(){
   client.subscribe("v1/Adafruit/fingerprint");
   client.subscribe("v1/test/testData");
   client.subscribe("v1/pulseSensor/Heart");
+  client.subscribe("v1/patient/emergency");
   digitalWrite(LEDGREEN,HIGH); //Ready.
+  digitalWrite(LEDYELLOW,LOW);
   buzzAlert(1);
 
 }
@@ -98,24 +102,31 @@ void ReceivedMessage(char*topic, byte*payload, unsigned int length) {
   for(int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
   }
-  Serial.println();
-  StaticJsonDocument<256>  doc;
-  deserializeJson(doc, payload, length);
-  if(doc["id"] == "arduino_Distance"){
-    distance = doc["distance"];
-    monitorId = doc["monitorId"];
-  }else if(doc["id"] == "arduino_PulseSensor"){
-    BPM = doc["bpm"];
-  }else if(doc["id"] == "arduino_DHT11"){
-    temperature = doc["temperature"];
-    humidity = doc["humidity"];
-  }else if(doc["id"] > 0){
-    if(doc["id"] == 1){
-      patientId = "Patient_1";
-      testBegin = true;
-    }else if(doc["id"] == 2){
-      patientId = "Patient_2";
-      testBegin = true;
+  if(String(topic) == "v1/patient/emergency"){
+    Serial.println("EMERGENCY!");
+    digitalWrite(LEDYELLOW,HIGH);
+    delay(2000);
+    digitalWrite(LEDYELLOW,LOW);
+  }else{
+    Serial.println();
+    StaticJsonDocument<256>  doc;
+    deserializeJson(doc, payload, length);
+    if(doc["id"] == "arduino_Distance"){
+      distance = doc["distance"];
+      monitorId = doc["monitorId"];
+    }else if(doc["id"] == "arduino_PulseSensor"){
+      BPM = doc["bpm"];
+    }else if(doc["id"] == "arduino_DHT11"){
+      temperature = doc["temperature"];
+      humidity = doc["humidity"];
+    }else if(doc["id"] > 0){
+      if(doc["id"] == 1){
+        patientId = "Patient_1";
+        testBegin = true;
+      }else if(doc["id"] == 2){
+        patientId = "Patient_2";
+        testBegin = true;
+      }
     }
   }
 }
@@ -176,7 +187,7 @@ DynamicJsonDocument temperatureHumidityTest(){
   HM19.println("####End of Temperature and Humidity####");
   HM19.println(" ");
   HM19.println(" ");
-  buzzAlert(1);
+  buzzAlert(2);
   return response;
 }
 
@@ -251,7 +262,7 @@ void loop() {
       reactionTimeCompleted = false;
       heartRateCompleted = false;
       HM19.println("###########END OF TEST THANKS!#############");
-      delay(1000);
+      delay(1000);  
     }
     client.loop();
   }
