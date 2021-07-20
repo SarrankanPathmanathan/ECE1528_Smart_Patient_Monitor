@@ -8,6 +8,7 @@ from datetime import datetime;
 KAFKA_URL = '192.168.0.19'
 KAFKA_PORT = '9092'
 producer = KafkaProducer(bootstrap_servers=KAFKA_URL+':'+KAFKA_PORT, value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+
 KAFKA_TOPIC_MONITOR = "Monitoring_Devices"
 KAFKA_TOPIC_TESTS = "Test_Results"
 KAFKA_TOPIC_PATIENTS = "Patients"
@@ -18,9 +19,10 @@ MQTT_TOPIC_TEMP = "v1/DHTsensor/roomtempandhumidity"
 MQTT_TOPIC_HEART = "v1/pulseSensor/Heart"
 MQTT_TOPIC_BIOMETRIC = "v1/Adafruit/fingerprint"
 
+
 MQTT_BROKER_IP="192.168.0.20"
 MQTT_BROKER_PORT=1883
-
+    
 def on_connect(client, userdata, flags, rc):
     print("MQTT bridge: connected to MQTT broker")
     client.subscribe(MQTT_TOPIC_DISTANCE)
@@ -49,7 +51,7 @@ def on_message(client, userdata, message):
     elif(jsonmsg["id"] > 0):
         jsonmsg["id"] = "Patient_" + str(jsonmsg["id"]);
         future = producer.send(KAFKA_TOPIC_PATIENTS, json.dumps(jsonmsg))
-        
+   
     # Block for 'synchronous' sends
     #try:
         #record_metadata = future.get(timeout=10)
