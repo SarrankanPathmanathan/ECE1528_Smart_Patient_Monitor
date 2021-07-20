@@ -51,8 +51,11 @@ The **doctor** can retrieve their patient's results via their own android app wh
 3. Apply PatientTestSubscriber.ino to Sensor Subscriber Microntroller.
 4. Setup Kafka, Zookeeper and Kakfa-Firebase Aggregator on Docker.
 5. Run MQTT broker on raspberry pi and run MQTT-bridge.py.
-6. Ensure communication is possible between raspberry pi and Docker instances (WSL)
-7. Upon correct fingerprint, data model is populated into Firebase Real-time Database given it has been setup against the Kafka-Firebase Aggregator.
+6. Run the KafkaConsumer.py 
+7. Ensure communication is possible between raspberry pi and Docker instances (WSL)
+8. Upon correct fingerprint, data model is populated into Firebase Real-time Database given it has been setup against the Kafka-Firebase Aggregator.
+9. This data is retrieved by both the android app and the node js web app.
+10. For experimentation, both the android app and web app can be run on their respective IDEs.
 
 
 
