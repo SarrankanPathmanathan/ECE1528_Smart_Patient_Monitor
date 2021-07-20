@@ -42,7 +42,7 @@ The **doctor** can retrieve their patient's results via their own android app wh
 
 # Firebase Data Model
 
-<img width="205" alt="datamodel" src="https://user-images.githubusercontent.com/8919416/125973839-c3a84cae-d0d0-4c6b-98fc-e0a54feae88d.PNG">
+<img width="249" alt="datamodel" src="https://user-images.githubusercontent.com/8919416/126340192-f1ede5cf-f418-4f91-90f0-c5c677c89b9d.PNG">
 
 # Instructions
 
